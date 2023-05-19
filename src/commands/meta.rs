@@ -1,10 +1,8 @@
-use rand::Rng;
+use tinyrand::{Rand, Seeded, StdRand};
+use tinyrand_std::ClockSeed;
 
 use crate::{Context, Error};
 
-enum Material {
-    Bronze(&'static str),
-}
 const ARMOUR_LOOT: [&str; 5] = [
     "Bronze Helmet",
     "Bronze Chestplate",
@@ -12,6 +10,12 @@ const ARMOUR_LOOT: [&str; 5] = [
     "Bronze Leggings",
     "Bronze Grieves",
 ];
+
+async fn get_seed() -> u64 {
+    let mut seed = ClockSeed::default();
+
+    seed.next_u64()
+}
 
 // Fetch Armour Loot Table.
 #[poise::command(prefix_command, slash_command)]
@@ -21,8 +25,11 @@ pub async fn fetch_armour(
     #[autocomplete = "poise::builtins::autocomplete_command"]
     _command: Option<String>,
 ) -> Result<(), Error> {
-    let armour = ARMOUR_LOOT[rand::thread_rng().gen_range(0..5)];
+    let mut rand = StdRand::seed(get_seed().await);
+
+    let armour = ARMOUR_LOOT[rand.next_lim_usize(5)];
     context.say(format!("{:?}", armour)).await?;
+
     Ok(())
 }
 
@@ -61,12 +68,13 @@ pub async fn ping(
 /// Vote for something
 ///
 /// Enter `~vote pumpkin` to vote for pumpkins
-#[poise::command(prefix_command, slash_command)]
+#[poise::command(prefix_command)]
 pub async fn vote(
     context: Context<'_>,
     #[description = "What to vote for"] choice: String,
 ) -> Result<(), Error> {
     // Lock the Mutex in a block {} so the Mutex isn't locked across an await point
+    // Remove when slash command is removed from servers.
     let num_votes = {
         let mut hash_map = context.data().votes.lock().unwrap();
         let num_votes = hash_map.entry(choice.clone()).or_default();
@@ -86,11 +94,12 @@ pub async fn vote(
 /// ~getvotes
 /// ~getvotes pumpkin
 /// ```
-#[poise::command(prefix_command, track_edits, aliases("votes"), slash_command)]
+#[poise::command(prefix_command, track_edits, aliases("votes"))]
 pub async fn getvotes(
     context: Context<'_>,
     #[description = "Choice to retrieve votes for"] choice: Option<String>,
 ) -> Result<(), Error> {
+    // Remove when slash command is removed from servers.
     if let Some(choice) = choice {
         let num_votes = *context
             .data()
