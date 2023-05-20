@@ -10,11 +10,7 @@ dotenvy = "0.15.7"
 poise = "0.5.5"
 tinyrand = "0.5.0"
 tinyrand-std = "0.5.0"
-
-[dependencies.serenity]
-version = "0.11.5"
-default_features = false
-features = ["client", "gateway", "rustls_backend", "model"]
+tinyvec = "1.6.0"
 
 [dependencies.tokio]
 version = "1.28"

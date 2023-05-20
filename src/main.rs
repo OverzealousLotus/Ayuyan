@@ -1,5 +1,7 @@
 #![warn(clippy::str_to_string)]
+#![forbid(unsafe_code)]
 
+mod assets;
 mod commands;
 
 use poise::serenity_prelude as serenity;
@@ -11,7 +13,7 @@ type Context<'a> = poise::Context<'a, Data, Error>;
 
 // Custom user data passed to all command functions
 pub struct Data {
-    votes: Mutex<HashMap<String, u32>>,
+    _votes: Mutex<HashMap<String, u32>>, // Currently unused.
 }
 
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
@@ -38,8 +40,6 @@ async fn main() {
     let options = poise::FrameworkOptions {
         commands: vec![
             commands::meta::help(),
-            commands::meta::vote(),
-            commands::meta::getvotes(),
             commands::meta::ping(),
             commands::meta::fetch_armour(),
             commands::owner::shutdown(),
@@ -48,8 +48,8 @@ async fn main() {
             prefix: Some("::".into()),
             edit_tracker: Some(poise::EditTracker::for_timespan(Duration::from_secs(3600))),
             additional_prefixes: vec![
-                poise::Prefix::Literal("hey bot"),
-                poise::Prefix::Literal("hey bot,"),
+                poise::Prefix::Literal("ayu"),
+                poise::Prefix::Literal("ayuyan"),
             ],
             ..Default::default()
         },
@@ -99,7 +99,7 @@ async fn main() {
                 println!("Logged in as {}", _ready.user.name);
                 poise::builtins::register_globally(context, &framework.options().commands).await?;
                 Ok(Data {
-                    votes: Mutex::new(HashMap::new()),
+                    _votes: Mutex::new(HashMap::new()),
                 })
             })
         })
