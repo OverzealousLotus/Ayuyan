@@ -1,40 +1,34 @@
 use tinyrand::{Rand, Seeded, StdRand};
-use tinyrand_std::ClockSeed;
+use tinyvec::*;
 
+use crate::assets::common::{get_seed, speak};
+use crate::assets::equipment::{Armour, ARMOUR_LOOT};
 use crate::{Context, Error};
 
-const ARMOUR_LOOT: [&str; 5] = [
-    "Bronze Helmet",
-    "Bronze Chestplate",
-    "Bronze Gauntlets",
-    "Bronze Leggings",
-    "Bronze Grieves",
-];
-
-async fn get_seed() -> u64 {
-    let mut seed = ClockSeed::default();
-
-    seed.next_u64()
-}
-
 // Fetch Armour Loot Table.
-#[poise::command(prefix_command, slash_command)]
+#[poise::command(slash_command)]
 pub async fn fetch_armour(
     context: Context<'_>,
-    #[description = "Fetch a randomly selected item from Loot Table of type 'armour'"]
-    #[autocomplete = "poise::builtins::autocomplete_command"]
-    _command: Option<String>,
+    #[description = "Get Armour from table with set roll count."]
+    #[min = 1_usize]
+    #[max = 20_usize]
+    roll_count: Option<usize>,
 ) -> Result<(), Error> {
-    let mut rand = StdRand::seed(get_seed().await);
+    let mut armours: TinyVec<[Armour; 20]> = tiny_vec!();
 
-    let armour = ARMOUR_LOOT[rand.next_lim_usize(5)];
-    context.say(format!("{:?}", armour)).await?;
+    for _ in 0..roll_count.unwrap_or(1) {
+        let mut rand = StdRand::seed(get_seed().await);
+        let armour = ARMOUR_LOOT[rand.next_lim_usize(35)];
+        armours.push(armour);
+    }
+
+    speak(context, format!("{:?}", armours).as_str()).await;
 
     Ok(())
 }
 
 // Show help menu.
-#[poise::command(prefix_command, track_edits, slash_command)]
+#[poise::command(track_edits, slash_command)]
 pub async fn help(
     context: Context<'_>,
     #[description = "List commands for Ayuyan."]
@@ -62,69 +56,5 @@ pub async fn ping(
     _command: Option<String>,
 ) -> Result<(), Error> {
     context.say("Pong!").await?;
-    Ok(())
-}
-
-/// Vote for something
-///
-/// Enter `~vote pumpkin` to vote for pumpkins
-#[poise::command(prefix_command)]
-pub async fn vote(
-    context: Context<'_>,
-    #[description = "What to vote for"] choice: String,
-) -> Result<(), Error> {
-    // Lock the Mutex in a block {} so the Mutex isn't locked across an await point
-    // Remove when slash command is removed from servers.
-    let num_votes = {
-        let mut hash_map = context.data().votes.lock().unwrap();
-        let num_votes = hash_map.entry(choice.clone()).or_default();
-        *num_votes += 1;
-        *num_votes
-    };
-
-    let response = format!("Successfully voted for {choice}. {choice} now has {num_votes} votes!");
-    context.say(response).await?;
-    Ok(())
-}
-
-/// Retrieve number of votes
-///
-/// Retrieve the number of votes either in general, or for a specific choice:
-/// ```
-/// ~getvotes
-/// ~getvotes pumpkin
-/// ```
-#[poise::command(prefix_command, track_edits, aliases("votes"))]
-pub async fn getvotes(
-    context: Context<'_>,
-    #[description = "Choice to retrieve votes for"] choice: Option<String>,
-) -> Result<(), Error> {
-    // Remove when slash command is removed from servers.
-    if let Some(choice) = choice {
-        let num_votes = *context
-            .data()
-            .votes
-            .lock()
-            .unwrap()
-            .get(&choice)
-            .unwrap_or(&0);
-        let response = match num_votes {
-            0 => format!("Nobody has voted for {} yet", choice),
-            _ => format!("{} people have voted for {}", num_votes, choice),
-        };
-        context.say(response).await?;
-    } else {
-        let mut response = String::new();
-        for (choice, num_votes) in context.data().votes.lock().unwrap().iter() {
-            response += &format!("{}: {} votes", choice, num_votes);
-        }
-
-        if response.is_empty() {
-            response += "Nobody has voted for anything yet :(";
-        }
-
-        context.say(response).await?;
-    };
-
     Ok(())
 }
