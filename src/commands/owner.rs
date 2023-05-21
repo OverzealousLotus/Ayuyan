@@ -1,7 +1,9 @@
 use crate::{Context, Error};
 
+/// Shutdown Ayuyan for update, or maintenance.
+/// ***Owner only***
 #[poise::command(prefix_command, owners_only, hide_in_help)]
-pub async fn shutdown(context: Context<'_>) -> Result<(), Error> {
+pub(crate) async fn shutdown(context: Context<'_>) -> Result<(), Error> {
     context.say("I am inevitable...").await?;
     context
         .framework()

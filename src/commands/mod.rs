@@ -1,2 +1,2 @@
-pub mod meta;
-pub mod owner;
+pub(crate) mod meta;
+pub(crate) mod owner;
