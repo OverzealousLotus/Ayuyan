@@ -1,21 +1,34 @@
-#![warn(clippy::str_to_string)]
+#![warn(
+    clippy::str_to_string,
+    noop_method_call,
+    single_use_lifetimes,
+    trivial_casts,
+    unreachable_pub,
+    unused_crate_dependencies
+)]
 #![forbid(unsafe_code)]
 
+/// Bringing local modules into scope.
 mod assets;
 mod commands;
 
-use poise::serenity_prelude as serenity;
-use std::{collections::HashMap, sync::Mutex, time::Duration};
+/// Bringing Standard Library into scope.
+use std::time::Duration;
 
-// Types used by all command functions
+/// Bringing external crates into scope.
+use dashmap::DashMap;
+use poise::serenity_prelude as serenity;
+
+/// Types used by all command functions
 type Error = Box<dyn std::error::Error + Send + Sync>;
 type Context<'a> = poise::Context<'a, Data, Error>;
 
-// Custom user data passed to all command functions
+/// User data passed to all functions defined.
 pub struct Data {
-    _votes: Mutex<HashMap<String, u32>>, // Currently unused.
+    _votes: DashMap<String, u32>, // Currently unused.
 }
 
+/// What to do when an error occurs while running.
 async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     // This is our custom error handler
     // They are many errors that can occur, so we only handle the ones we want to customize
@@ -33,6 +46,7 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
     }
 }
 
+/// Main function to put everything together.
 #[tokio::main]
 async fn main() {
     // FrameworkOptions contains all of poise's configuration option in one struct
@@ -41,7 +55,10 @@ async fn main() {
         commands: vec![
             commands::meta::help(),
             commands::meta::ping(),
-            commands::meta::fetch_armour(),
+            commands::meta::fetch(),
+            commands::meta::armour(),
+            commands::meta::weapon(),
+            commands::meta::roll(),
             commands::owner::shutdown(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
@@ -99,7 +116,7 @@ async fn main() {
                 println!("Logged in as {}", _ready.user.name);
                 poise::builtins::register_globally(context, &framework.options().commands).await?;
                 Ok(Data {
-                    _votes: Mutex::new(HashMap::new()),
+                    _votes: DashMap::new(),
                 })
             })
         })
