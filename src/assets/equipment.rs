@@ -4,8 +4,6 @@
 /// Where <I> is the item in particular.
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) enum Material<I> {
-    #[default]
-    PhantomMaterial,
     Steel(I),
     CastIron(I),
     WroughtIron(I),
@@ -13,28 +11,30 @@ pub(crate) enum Material<I> {
     Iron(I),
     PigIron(I),
     Brass(I),
+    #[default]
+    PhantomMaterial,
 }
 
 /// Used to represent armour type.
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) enum Armour {
-    #[default]
-    PhantomArmour,
     Helmet,
     Chestplate,
     Gauntlets,
     Chausses,
     Grieves,
+    #[default]
+    PhantomArmour,
 }
 
 /// Used to represent weapon type.
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) enum Weapon {
-    #[default]
-    PhantomWeapon,
     Shortsword,
     Longsword,
     Greatsword,
     Ultrasword,
     Mace,
+    #[default]
+    PhantomWeapon,
 }
