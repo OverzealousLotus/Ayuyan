@@ -55,7 +55,10 @@ async fn main() {
         commands: vec![
             commands::meta::help(),
             commands::meta::ping(),
-            commands::meta::fetch_armour(),
+            commands::meta::fetch(),
+            commands::meta::armour(),
+            commands::meta::weapon(),
+            commands::meta::roll(),
             commands::owner::shutdown(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
