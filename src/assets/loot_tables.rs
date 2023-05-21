@@ -1,8 +1,8 @@
 use crate::assets::equipment::{Armour, Material, Weapon};
-/// Loot Tables used to fetch from various commands in Ayuyan's codebase.
 use crate::assets::equipment::{Armour::*, Material::*, Weapon::*};
 
 /// Array used to store armours.
+/// Strength goes from highest being strongest, to lowest being weakest.
 pub(crate) const ARMOUR_LOOT: [Material<Armour>; 35] = [
     Steel(Helmet),
     Steel(Chestplate),

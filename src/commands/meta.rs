@@ -31,8 +31,7 @@ pub(crate) async fn armour(
 
     for _ in 0..roll_count.unwrap_or(1) {
         let mut rand = StdRand::seed(get_seed().await);
-        let armour = ARMOUR_LOOT[rand.next_lim_usize(35)];
-        armours.push(armour);
+        armours.push(ARMOUR_LOOT[rand.next_lim_usize(ARMOUR_LOOT.len())]);
     }
 
     speak(context, format!("{:?}", armours).as_str()).await;
@@ -53,8 +52,7 @@ pub(crate) async fn weapon(
 
     for _ in 0..count.unwrap_or(1) {
         let mut rand = StdRand::seed(get_seed().await);
-        let weapon = WEAPON_LOOT[rand.next_lim_usize(35)];
-        weapons.push(weapon);
+        weapons.push(WEAPON_LOOT[rand.next_lim_usize(WEAPON_LOOT.len())]);
     }
 
     speak(context, format!("{:?}", weapons).as_str()).await;
@@ -82,7 +80,7 @@ pub(crate) async fn roll(
         results.push(rand_num.next_lim_usize(sides.unwrap_or(20)))
     }
 
-    if sum.unwrap_or(false) == true {
+    if sum.unwrap_or(false) {
         speak(
             context,
             format!("{:?}", results.into_iter().sum::<usize>()).as_str(),
@@ -117,12 +115,7 @@ pub(crate) async fn help(
 
 /// Simple command to check to see if Ayuyan is online.
 #[poise::command(slash_command)]
-pub(crate) async fn ping(
-    context: Context<'_>,
-    #[description = "Is Ayuyan online?"]
-    #[autocomplete = "poise::builtins::autocomplete_command"]
-    _command: Option<String>,
-) -> Result<(), Error> {
+pub(crate) async fn ping(context: Context<'_>) -> Result<(), Error> {
     context.say("Pong!").await?;
     Ok(())
 }
