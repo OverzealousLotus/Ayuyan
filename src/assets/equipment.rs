@@ -1,69 +1,40 @@
-use Armour::*;
-use ArmourType::*;
-
-// Enums are goated.
-pub const ARMOUR_LOOT: [Armour; 35] = [
-    Steel(Helmet),
-    Steel(Chestplate),
-    Steel(Gauntlets),
-    Steel(Chausses),
-    Steel(Grieves),
-    CastIron(Helmet),
-    CastIron(Chestplate),
-    CastIron(Gauntlets),
-    CastIron(Chausses),
-    CastIron(Grieves),
-    WroughtIron(Helmet),
-    WroughtIron(Chestplate),
-    WroughtIron(Gauntlets),
-    WroughtIron(Chausses),
-    WroughtIron(Grieves),
-    Bronze(Helmet),
-    Bronze(Chestplate),
-    Bronze(Gauntlets),
-    Bronze(Chausses),
-    Bronze(Grieves),
-    Iron(Helmet),
-    Iron(Chestplate),
-    Iron(Gauntlets),
-    Iron(Chausses),
-    Iron(Grieves),
-    PigIron(Helmet),
-    PigIron(Chestplate),
-    PigIron(Gauntlets),
-    PigIron(Chausses),
-    PigIron(Grieves),
-    Brass(Helmet),
-    Brass(Chestplate),
-    Brass(Gauntlets),
-    Brass(Chausses),
-    Brass(Grieves),
-];
-
-// Needs to be copyable for current use case.
-// Default is implemented because of `tinyvec`'s requirement.
-// Debug is debug.
+/// `Default` is implemented to conform with `tinyvec`'s requirement.
+/// `Clone & Copy` is implemented for ease of use.
+/// Used to determine what material equipment is made out of.
+/// Where <I> is the item in particular.
 #[derive(Default, Debug, Clone, Copy)]
-pub enum Armour {
-    // Strength is determined by strongest on top, weakest on bottom.
+pub(crate) enum Material<I> {
     #[default]
-    Empty,
-    Steel(ArmourType),
-    CastIron(ArmourType),
-    WroughtIron(ArmourType),
-    Bronze(ArmourType),
-    Iron(ArmourType),
-    PigIron(ArmourType),
-    Brass(ArmourType),
+    PhantomMaterial,
+    Steel(I),
+    CastIron(I),
+    WroughtIron(I),
+    Bronze(I),
+    Iron(I),
+    PigIron(I),
+    Brass(I),
 }
 
-// Read above comments
+/// Used to represent armour type.
 #[derive(Default, Debug, Clone, Copy)]
-pub enum ArmourType {
+pub(crate) enum Armour {
     #[default]
+    PhantomArmour,
     Helmet,
     Chestplate,
     Gauntlets,
     Chausses,
     Grieves,
+}
+
+/// Used to represent weapon type.
+#[derive(Default, Debug, Clone, Copy)]
+pub(crate) enum Weapon {
+    #[default]
+    PhantomWeapon,
+    Shortsword,
+    Longsword,
+    Greatsword,
+    Ultrasword,
+    Mace,
 }
