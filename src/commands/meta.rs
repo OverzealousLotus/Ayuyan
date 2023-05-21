@@ -80,7 +80,7 @@ pub(crate) async fn roll(
         results.push(rand_num.next_lim_usize(sides.unwrap_or(20)))
     }
 
-    if sum.unwrap_or(false) == true {
+    if sum.unwrap_or(false) {
         speak(
             context,
             format!("{:?}", results.into_iter().sum::<usize>()).as_str(),
