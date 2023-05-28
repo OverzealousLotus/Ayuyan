@@ -12,12 +12,10 @@
 mod assets;
 mod commands;
 
-/// Bringing Standard Library into scope.
-use std::time::Duration;
-
 /// Bringing external crates into scope.
 use dashmap::DashMap;
 use poise::serenity_prelude as serenity;
+use tokio::time::Duration;
 
 /// Types used by all command functions
 type Error = Box<dyn std::error::Error + Send + Sync>;
@@ -87,8 +85,8 @@ async fn main() {
         /// Every command invocation must pass this check to continue execution
         command_check: Some(|context| {
             Box::pin(async move {
-                if context.author().id == 361165539072278529 {
-                    // Get clapped
+                if context.author().id == 0 {
+                    // Basically bans the user from invoking commands.
                     return Ok(false);
                 }
                 Ok(true)
