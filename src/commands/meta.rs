@@ -34,7 +34,7 @@ pub(crate) async fn armour(
         armours.push(ARMOUR_LOOT[rand.next_lim_usize(ARMOUR_LOOT.len())]);
     }
 
-    speak(context, format!("{:?}", armours).as_str()).await;
+    speak(context, format!("{armours:?}").as_str()).await;
 
     Ok(())
 }
@@ -55,11 +55,12 @@ pub(crate) async fn weapon(
         weapons.push(WEAPON_LOOT[rand.next_lim_usize(WEAPON_LOOT.len())]);
     }
 
-    speak(context, format!("{:?}", weapons).as_str()).await;
+    speak(context, format!("{weapons:?}").as_str()).await;
 
     Ok(())
 }
 
+/// Simple command to roll a die.
 #[poise::command(slash_command)]
 pub(crate) async fn roll(
     context: Context<'_>,
@@ -87,7 +88,7 @@ pub(crate) async fn roll(
         )
         .await;
     } else {
-        speak(context, format!("{:?}", results).as_str()).await;
+        speak(context, format!("{results:?}").as_str()).await;
     }
 
     Ok(())

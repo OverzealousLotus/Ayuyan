@@ -10,15 +10,17 @@ env:
   CARGO_TERM_COLOR: always
 
 jobs:
-  build:
+  linting:
 
     runs-on: ubuntu-latest
 
     steps:
     - uses: actions/checkout@v3
-    - name: Check
-      run: cargo check
+    - name: Install cargo-audit
+      run: cargo install cargo-audit
     - name: Build
       run: cargo build --verbose
-    - name: Clippy Check
-      run: cargo clippy
+    - name: Clippy
+      run: cargo clippy --verbose -- -D warnings
+    - name: Audit
+      run: cargo audit
