@@ -1,13 +1,15 @@
-use tinyrand::Rand;
+use tinyrand::{Rand, Seeded, StdRand};
 use tinyrand_std::ClockSeed;
 
 use crate::Context;
 
 // Function to create a seed, then return it.
-pub(crate) async fn get_seed() -> u64 {
+pub(crate) async fn gen_num(limit: usize) -> usize {
     let mut seed = ClockSeed::default();
 
-    seed.next_u64()
+    let mut random_num = StdRand::seed(seed.next_u64());
+
+    random_num.next_lim_usize(limit)
 }
 
 // Simple function to simplify, and handle message sending.
