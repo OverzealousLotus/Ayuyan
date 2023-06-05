@@ -140,7 +140,7 @@ pub(crate) async fn boop(context: Context<'_>) -> Result<(), Error> {
     while let Some(mci) = serenity::CollectComponentInteraction::new(context)
         .author_id(context.author().id)
         .channel_id(context.channel_id())
-        .timeout(std::time::Duration::from_secs(120))
+        .timeout(tokio::time::Duration::from_secs(120))
         .filter(move |mci| mci.data.custom_id == uuid_boop.to_string())
         .await
     {
