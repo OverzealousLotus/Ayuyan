@@ -71,6 +71,10 @@ pub(crate) async fn roll(
     #[max = 200_usize]
     sides: Option<usize>,
     #[description = "Specify if rolls should be summed up."] sum: Option<bool>,
+    #[description = "Modifier to be applied to rolls."]
+    #[min = -100_isize]
+    #[max = 100_isize]
+    modifier: Option<isize>,
 ) -> Result<(), Error> {
     let mut results: TinyVec<[usize; 128]> = tiny_vec!();
 
@@ -78,16 +82,33 @@ pub(crate) async fn roll(
         results.push(gen_num(sides.unwrap_or(20)).await)
     }
 
-    if sum.unwrap_or(false) {
+    if modifier.is_none() {
+        if sum.unwrap_or(false) {
+            speak(
+                context,
+                format!("{:?}", results.iter().sum::<usize>()).as_str(),
+            )
+            .await;
+        } else {
+            speak(context, format!("{results:?}").as_str()).await;
+        }
+    } else if sum.unwrap_or(false) {
+        let modified_results = results
+            .iter()
+            .map(|roll| *roll as isize + modifier.unwrap())
+            .collect::<TinyVec<[isize; 128]>>();
         speak(
             context,
-            format!("{:?}", results.iter().sum::<usize>()).as_str(),
+            format!("{:?}", modified_results.iter().sum::<isize>()).as_str(),
         )
         .await;
     } else {
-        speak(context, format!("{results:?}").as_str()).await;
+        let modified_results = results
+            .iter()
+            .map(|roll| *roll as isize + modifier.unwrap())
+            .collect::<TinyVec<[isize; 128]>>();
+        speak(context, format!("{modified_results:?}").as_str()).await;
     }
-
     Ok(())
 }
 
