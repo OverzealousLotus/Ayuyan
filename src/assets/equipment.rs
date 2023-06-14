@@ -2,14 +2,21 @@
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) enum Material<I> {
     Steel(I),
-    CastIron(I),
-    WroughtIron(I),
+    IronType(Iron<I>),
     Bronze(I),
-    Iron(I),
-    PigIron(I),
     Brass(I),
     #[default]
     PhantomMaterial,
+}
+
+/// Mockup
+#[derive(Default, Debug, Clone, Copy)]
+pub(crate) enum Iron<I> {
+    Cast(I),
+    Wrought(I),
+    Pig(I),
+    #[default]
+    PhantomIron,
 }
 
 /// Strength ratings for consumables.
