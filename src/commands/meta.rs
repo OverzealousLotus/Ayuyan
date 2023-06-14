@@ -3,23 +3,26 @@ use tinyvec::*;
 
 /// Local crates brought into scopes.
 use crate::assets::{
-    common::{gen_num, speak},
-    equipment::{Armour, Material, Weapon},
-    loot_tables::{ARMOUR_LOOT, WEAPON_LOOT},
+    common::{gen_num, get_armour, get_elixir, get_weapon, speak},
+    loot_tables::{ARMOUR_LOOT, ELIXIR_LOOT, WEAPON_LOOT},
 };
 use crate::serenity;
 use crate::{Context, Error};
 
 /// Fetches x amount of pieces of y.
 /// If left empty, fetches only once.
-#[poise::command(slash_command, subcommands("armour", "weapon"))]
+#[poise::command(
+    slash_command,
+    member_cooldown = 2,
+    subcommands("armour", "weapon", "elixir", "generic")
+)]
 pub(crate) async fn fetch(context: Context<'_>) -> Result<(), Error> {
     speak(context, "Simple subcommand test for Ayuyan.").await;
     Ok(())
 }
 
-/// Subcommand of `fetch` to get armour instead of weapons.
-#[poise::command(slash_command)]
+/// Subcommand of `fetch` to get armour.
+#[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn armour(
     context: Context<'_>,
     #[description = "Get Armour from table with set roll count."]
@@ -27,19 +30,19 @@ pub(crate) async fn armour(
     #[max = 20_usize]
     roll_count: Option<usize>,
 ) -> Result<(), Error> {
-    let mut armours: TinyVec<[Material<Armour>; 20]> = tiny_vec!();
+    let mut armours: TinyVec<[&str; 20]> = tiny_vec!();
 
     for _ in 0..roll_count.unwrap_or(1) {
-        armours.push(ARMOUR_LOOT[gen_num(ARMOUR_LOOT.len()).await]);
+        armours.push(get_armour(ARMOUR_LOOT[gen_num(ARMOUR_LOOT.len()).await]).await);
     }
 
-    speak(context, format!("{armours:?}").as_str()).await;
+    speak(context, format!("{armours:#?}").as_str()).await;
 
     Ok(())
 }
 
-/// Subcommmand of `fetch` to get weapons instead of armour.
-#[poise::command(slash_command)]
+/// Subcommmand of `fetch` to get weaponry.
+#[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn weapon(
     context: Context<'_>,
     #[description = "Get Weapon from table with set roll count."]
@@ -47,19 +50,65 @@ pub(crate) async fn weapon(
     #[max = 20_usize]
     count: Option<usize>,
 ) -> Result<(), Error> {
-    let mut weapons: TinyVec<[Material<Weapon>; 20]> = tiny_vec!();
+    let mut weapons: TinyVec<[&str; 20]> = tiny_vec!();
 
     for _ in 0..count.unwrap_or(1) {
-        weapons.push(WEAPON_LOOT[gen_num(WEAPON_LOOT.len()).await]);
+        weapons.push(get_weapon(WEAPON_LOOT[gen_num(WEAPON_LOOT.len()).await]).await);
     }
 
-    speak(context, format!("{weapons:?}").as_str()).await;
+    speak(context, format!("{weapons:#?}").as_str()).await;
+
+    Ok(())
+}
+
+/// Subcommmand of `fetch` to get elixirs.
+#[poise::command(slash_command, member_cooldown = 2)]
+pub(crate) async fn elixir(
+    context: Context<'_>,
+    #[description = "Get Elixir from table with set roll count."]
+    #[min = 1_usize]
+    #[max = 20_usize]
+    count: Option<usize>,
+) -> Result<(), Error> {
+    let mut elixirs: TinyVec<[&str; 20]> = tiny_vec!();
+
+    for _ in 0..count.unwrap_or(1) {
+        elixirs.push(get_elixir(ELIXIR_LOOT[gen_num(ELIXIR_LOOT.len()).await]).await);
+    }
+
+    speak(context, format!("{elixirs:#?}").as_str()).await;
+
+    Ok(())
+}
+
+/// Subcommmand of `fetch` to get elixirs.
+#[poise::command(slash_command, member_cooldown = 2)]
+pub(crate) async fn generic(
+    context: Context<'_>,
+    #[description = "Get generic loot from tables with set roll count."]
+    #[min = 1_usize]
+    #[max = 20_usize]
+    count: Option<usize>,
+) -> Result<(), Error> {
+    let mut loot: TinyVec<[&str; 20]> = tiny_vec!();
+
+    for _ in 0..count.unwrap_or(1) {
+        let table = gen_num(3).await;
+        match table {
+            0 => loot.push(get_armour(ARMOUR_LOOT[gen_num(ARMOUR_LOOT.len()).await]).await),
+            1 => loot.push(get_weapon(WEAPON_LOOT[gen_num(WEAPON_LOOT.len()).await]).await),
+            2 => loot.push(get_elixir(ELIXIR_LOOT[gen_num(ELIXIR_LOOT.len()).await]).await),
+            _ => loot.push("Error"),
+        }
+    }
+
+    speak(context, format!("{loot:#?}").as_str()).await;
 
     Ok(())
 }
 
 /// Simple command to roll a die.
-#[poise::command(slash_command)]
+#[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn roll(
     context: Context<'_>,
     #[description = "Times die will be rolled."]
@@ -113,7 +162,7 @@ pub(crate) async fn roll(
 }
 
 /// Lists off available commands for Ayuyan.
-#[poise::command(track_edits, slash_command)]
+#[poise::command(track_edits, slash_command, member_cooldown = 2)]
 pub(crate) async fn help(
     context: Context<'_>,
     #[description = "List commands for Ayuyan."]
@@ -133,13 +182,14 @@ pub(crate) async fn help(
 }
 
 /// Simple command to check to see if Ayuyan is online.
-#[poise::command(slash_command)]
+#[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn ping(context: Context<'_>) -> Result<(), Error> {
     context.say("Pong!").await?;
     Ok(())
 }
 
-#[poise::command(prefix_command, track_edits)]
+/// Testing out some poise features.
+#[poise::command(prefix_command, track_edits, member_cooldown = 2)]
 pub(crate) async fn boop(context: Context<'_>) -> Result<(), Error> {
     let uuid_boop = context.id();
 
