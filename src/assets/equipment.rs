@@ -1,7 +1,4 @@
-/// `Default` is implemented to conform with `tinyvec`'s requirement.
-/// `Clone & Copy` is implemented for ease of use.
-/// Used to determine what material equipment is made out of.
-/// Where <I> is the item in particular.
+/// Types of materials available for weapons and armour.
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) enum Material<I> {
     Steel(I),
@@ -15,7 +12,28 @@ pub(crate) enum Material<I> {
     PhantomMaterial,
 }
 
-/// Used to represent armour type.
+/// Strength ratings for consumables.
+#[derive(Default, Debug, Clone, Copy)]
+pub(crate) enum Strength<I> {
+    Potent(I),
+    Nominal(I),
+    Impotent(I),
+    #[default]
+    PhantomStrength,
+}
+
+/// Types of available Elixirs.
+#[derive(Default, Debug, Clone, Copy)]
+pub(crate) enum Elixir {
+    Tenacity,
+    Vitality,
+    Vigor,
+    Vivacity,
+    #[default]
+    PhantomElixir,
+}
+
+/// Types of available Armour.
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) enum Armour {
     Helmet,
@@ -27,7 +45,7 @@ pub(crate) enum Armour {
     PhantomArmour,
 }
 
-/// Used to represent weapon type.
+/// Types of available weaponry.
 #[derive(Default, Debug, Clone, Copy)]
 pub(crate) enum Weapon {
     Shortsword,
