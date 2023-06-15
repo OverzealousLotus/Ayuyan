@@ -14,10 +14,25 @@ use crate::{Context, Error};
 #[poise::command(
     slash_command,
     member_cooldown = 2,
-    subcommands("armour", "weapon", "elixir", "generic")
+    subcommands("armour", "weapon", "elixir", "generic", "coin")
 )]
 pub(crate) async fn fetch(context: Context<'_>) -> Result<(), Error> {
     speak(context, "Simple subcommand test for Ayuyan.").await;
+    Ok(())
+}
+
+/// Subcommand of `fetch` to get coins.
+#[poise::command(slash_command, member_cooldown = 2)]
+pub(crate) async fn coin(
+    context: Context<'_>,
+    #[description = "Limit of randomized coin count."]
+    #[min = 1_usize]
+    #[max = 1000_usize]
+    limit: Option<usize>,
+) -> Result<(), Error> {
+    let result = gen_num(limit.unwrap_or(20)).await;
+
+    speak(context, &format!("{result}")).await;
     Ok(())
 }
 
