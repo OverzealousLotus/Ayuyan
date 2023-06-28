@@ -17,6 +17,5 @@ tinyvec = "1.6.0"
 version = "1.28"
 features = ["macros", "rt-multi-thread"]
 
-
 [profile.release]
 lto = true
