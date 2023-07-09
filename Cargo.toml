@@ -15,6 +15,7 @@ tinyvec = "1.6.0"
 
 [dependencies.tokio]
 version = "1.28"
+default-features = false
 features = ["macros", "rt-multi-thread"]
 
 [profile.release]
