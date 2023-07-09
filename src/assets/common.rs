@@ -3,7 +3,7 @@ use tinyrand_std::ClockSeed;
 
 use crate::Context;
 
-// Function to create a seed, then return it.
+/// Function to create a seed, then return it.
 pub(crate) async fn gen_num(limit: usize) -> usize {
     let mut seed = ClockSeed::default();
 
@@ -12,7 +12,7 @@ pub(crate) async fn gen_num(limit: usize) -> usize {
     random_num.next_lim_usize(limit)
 }
 
-// Simple function to simplify, and handle message sending.
+/// Function to simplify, and handle message sending.
 pub(crate) async fn speak(context: Context<'_>, message: &str) {
     if let Err(reason) = context.say(message).await {
         println!(
@@ -21,5 +21,22 @@ pub(crate) async fn speak(context: Context<'_>, message: &str) {
         );
     } else {
         println!("Message: {} | Successfully sent!", message);
+    }
+}
+
+/// Function to fetch user input.
+pub(crate) async fn intake(context: Context<'_>, prompt: &str, err_response: &str) -> String {
+    speak(context, prompt).await;
+    if let Some(answer) = context
+        .author()
+        .await_reply(context)
+        .timeout(std::time::Duration::from_secs(10))
+        .await
+    {
+        answer.content.to_string()
+    } else {
+        eprintln!("An error occurred trying to fetch intake!");
+        speak(context, err_response).await;
+        String::from("Noop")
     }
 }
