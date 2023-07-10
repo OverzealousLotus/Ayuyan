@@ -121,7 +121,7 @@ pub(crate) async fn tincture(
         tinctures.push(TINCTURE_LOOT[gen_num(TINCTURE_LOOT.len()).await]);
     }
 
-    speak(context, format!("{tinctures:#?}").as_str()).await;
+    speak(context, &format!("{tinctures:#?}")).await;
 
     Ok(())
 }
@@ -218,15 +218,30 @@ pub(crate) async fn roll(
 #[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn condition(
     context: Context<'_>,
-    #[description = "Specifies if Ayuyan should add a threshold condition. Default is True."]
-    threshold: Option<bool>,
-    #[description = "Specifies if Ayuyan should add a parity condition. Default is False."] parity: Option<bool>,
-    #[description = "Limits the Threshold amount for a given number."]
+    #[description = "If a Threshold should be required. Default is True."] threshold: Option<bool>,
+    #[description = "If a Parity should be required. Default is False."] parity: Option<bool>,
+    #[description = "Limits lower Threshold amount for result. Default is 0."]
     #[min = 1_usize]
     #[max = 100_usize]
-    limit: Option<usize>,
+    lower_limit: Option<usize>,
+    #[description = "Limits upper Threshold amount for result. Default is 20."]
+    #[min = 1_usize]
+    #[max = 100_usize]
+    upper_limit: Option<usize>,
 ) -> Result<(), Error> {
-    let threshold_amount = gen_num(limit.unwrap_or(20)).await;
+    let mut threshold_amount = gen_num(upper_limit.unwrap_or(20)).await;
+    if lower_limit > upper_limit {
+        speak(
+            context,
+            "The lower limit can't be greater than the upper, silly!",
+        )
+        .await;
+    } else {
+        while threshold_amount <= lower_limit.unwrap_or(0) {
+            threshold_amount = gen_num(upper_limit.unwrap_or(20)).await;
+        }
+    }
+
     let parity_type = match gen_num(2).await {
         0 => "even",
         1 => "odd",
