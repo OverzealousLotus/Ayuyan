@@ -49,14 +49,14 @@ async fn on_error(error: poise::FrameworkError<'_, Data, Error>) {
 async fn main() {
     // FrameworkOptions contains all of poise's configuration option in one struct
     // Every option can be omitted to use its default value
+
     let options = poise::FrameworkOptions {
         commands: vec![
             commands::meta::help(),
             commands::meta::ping(),
             commands::meta::fetch(),
             commands::meta::roll(),
-            commands::meta::boop(),
-            commands::owner::shutdown(),
+            commands::owner::rest(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
             prefix: Some("::".into()),

@@ -8,7 +8,7 @@ use crate::assets::{
     equipment::*,
     loot_tables::*,
 };
-use crate::serenity;
+use crate::fetch_subcommand;
 use crate::{Context, Error};
 
 /// Fetches x amount of pieces of y.
@@ -31,102 +31,74 @@ pub(crate) async fn fetch(context: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
-/// Subcommand of `fetch` to get coins.
-#[poise::command(slash_command, member_cooldown = 2)]
-pub(crate) async fn coin(
-    context: Context<'_>,
-    #[description = "Limit of randomized coin count."]
+fetch_subcommand!(
+    /// Grab a randomized amount of coins.
+    pub(crate) async fn coin
+    #[description = "Maximum amount of coins."]
     #[min = 1_usize]
     #[max = 1000_usize]
-    limit: Option<usize>,
-) -> Result<(), Error> {
-    let result = gen_num(limit.unwrap_or(20)).await;
+    limit: Option<usize>
+    let => result: usize,
+    gen_num(0, limit.unwrap_or(20)).await;
+);
 
-    speak(context, &format!("{result}")).await;
-    Ok(())
-}
-
-/// Subcommand of `fetch` to get armour.
-#[poise::command(slash_command, member_cooldown = 2)]
-pub(crate) async fn armour(
-    context: Context<'_>,
-    #[description = "Get Armour from table with set roll count."]
+fetch_subcommand!(
+    /// Grab Armour(s) from a table.
+    pub(crate) async fn armour
+    #[description = "Maximum amount of rolls."]
     #[min = 1_usize]
     #[max = 20_usize]
-    roll_count: Option<usize>,
-) -> Result<(), Error> {
-    let mut armours: TinyVec<[Material<Armour>; 20]> = tiny_vec!();
-
-    for _ in 0..roll_count.unwrap_or(1) {
-        armours.push(ARMOUR_LOOT[gen_num(ARMOUR_LOOT.len()).await]);
-    }
-
-    speak(context, format!("{armours:#?}").as_str()).await;
-
-    Ok(())
-}
-
-/// Subcommmand of `fetch` to get weaponry.
-#[poise::command(slash_command, member_cooldown = 2)]
-pub(crate) async fn weapon(
-    context: Context<'_>,
-    #[description = "Get Weapon from table with set roll count."]
-    #[min = 1_usize]
-    #[max = 20_usize]
-    count: Option<usize>,
-) -> Result<(), Error> {
-    let mut weapons: TinyVec<[Material<Weapon>; 20]> = tiny_vec!();
-
+    count: Option<usize>
+    let mut => armours: TinyVec<[Material<Armour>; 20]>,
+    tiny_vec!();
     for _ in 0..count.unwrap_or(1) {
-        weapons.push(WEAPON_LOOT[gen_num(WEAPON_LOOT.len()).await]);
+        armours.push(ARMOUR_LOOT[gen_num(0, ARMOUR_LOOT.len()).await]);
     }
+);
 
-    speak(context, format!("{weapons:#?}").as_str()).await;
-
-    Ok(())
-}
-
-/// Subcommmand of `fetch` to get elixirs.
-#[poise::command(slash_command, member_cooldown = 2)]
-pub(crate) async fn elixir(
-    context: Context<'_>,
-    #[description = "Get Elixir(s) from table with set roll count."]
+fetch_subcommand!(
+    /// Grab Weapon(s) from a table.
+    pub(crate) async fn weapon
+    #[description = "Maximum amount of rolls."]
     #[min = 1_usize]
     #[max = 20_usize]
-    count: Option<usize>,
-) -> Result<(), Error> {
-    let mut elixirs: TinyVec<[Strength<Elixir>; 20]> = tiny_vec!();
-
+    count: Option<usize>
+    let mut => weapons: TinyVec<[Material<Weapon>; 20]>,
+    tiny_vec!();
     for _ in 0..count.unwrap_or(1) {
-        elixirs.push(ELIXIR_LOOT[gen_num(ELIXIR_LOOT.len()).await]);
+        weapons.push(WEAPON_LOOT[gen_num(0, WEAPON_LOOT.len()).await]);
     }
+);
 
-    speak(context, format!("{elixirs:#?}").as_str()).await;
-
-    Ok(())
-}
-
-/// Subcommmand of `fetch` to get elixirs.
-#[poise::command(slash_command, member_cooldown = 2)]
-pub(crate) async fn tincture(
-    context: Context<'_>,
-    #[description = "Get Tincture(s) from table with set roll count."]
+fetch_subcommand!(
+    /// Grab Elixir(s) from a table.
+    pub(crate) async fn elixir
+    #[description = "Maximum amount of rolls."]
     #[min = 1_usize]
     #[max = 20_usize]
-    count: Option<usize>,
-) -> Result<(), Error> {
-    let mut tinctures: TinyVec<[Strength<Tincture>; 20]> = tiny_vec!();
-
+    count: Option<usize>
+    let mut => elixirs: TinyVec<[Strength<Elixir>; 20]>,
+    tiny_vec!();
     for _ in 0..count.unwrap_or(1) {
-        tinctures.push(TINCTURE_LOOT[gen_num(TINCTURE_LOOT.len()).await]);
+        elixirs.push(ELIXIR_LOOT[gen_num(0, ELIXIR_LOOT.len()).await]);
     }
+);
 
-    speak(context, format!("{tinctures:#?}").as_str()).await;
+fetch_subcommand!(
+    /// Grab Tincture(s) from a table.
+    pub(crate) async fn tincture
+    #[description = "Maximum amount of rolls."]
+    #[min = 1_usize]
+    #[max = 20_usize]
+    count: Option<usize>
+    let mut => tinctures: TinyVec<[Strength<Tincture>; 20]>,
+    tiny_vec!();
+    for _ in 0..count.unwrap_or(1) {
+        tinctures.push(TINCTURE_LOOT[gen_num(0, TINCTURE_LOOT.len()).await]);
+    }
+);
 
-    Ok(())
-}
-
-/// Subcommmand of `fetch` to get elixirs.
+/// Grab randomized loot from a table.
 #[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn generic(
     context: Context<'_>,
@@ -138,22 +110,22 @@ pub(crate) async fn generic(
     let mut loot = String::new();
 
     for _ in 0..count.unwrap_or(1) {
-        let table = gen_num(3).await;
+        let table = gen_num(0, 3).await;
         match table {
             0 => write!(
                 loot,
                 "{:#?}, ",
-                ARMOUR_LOOT[gen_num(ARMOUR_LOOT.len()).await]
+                ARMOUR_LOOT[gen_num(0, ARMOUR_LOOT.len()).await]
             )?,
             1 => write!(
                 loot,
                 "{:#?}, ",
-                WEAPON_LOOT[gen_num(WEAPON_LOOT.len()).await]
+                WEAPON_LOOT[gen_num(0, WEAPON_LOOT.len()).await]
             )?,
             2 => write!(
                 loot,
                 "{:#?}, ",
-                ELIXIR_LOOT[gen_num(ELIXIR_LOOT.len()).await]
+                ELIXIR_LOOT[gen_num(0, ELIXIR_LOOT.len()).await]
             )?,
             _ => write!(loot, "{:?}, ", Strength::Issue(Elixir::Issue))?,
         }
@@ -185,7 +157,7 @@ pub(crate) async fn roll(
     let mut results: TinyVec<[usize; 128]> = tiny_vec!();
 
     for _ in 0..count.unwrap_or(1) {
-        results.push(gen_num(sides.unwrap_or(20)).await)
+        results.push(gen_num(0, sides.unwrap_or(20)).await)
     }
 
     if modifier.is_none() {
@@ -218,16 +190,29 @@ pub(crate) async fn roll(
 #[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn condition(
     context: Context<'_>,
-    #[description = "Specifies if Ayuyan should add a threshold condition. Default is True."]
-    threshold: Option<bool>,
-    #[description = "Specifies if Ayuyan should add a parity condition. Default is False."] parity: Option<bool>,
-    #[description = "Limits the Threshold amount for a given number."]
+    #[description = "If a Threshold should be required. Default is True."] threshold: Option<bool>,
+    #[description = "If a Parity should be required. Default is False."] parity: Option<bool>,
+    #[description = "Limits lower Threshold amount for result. Default is 0."]
     #[min = 1_usize]
     #[max = 100_usize]
-    limit: Option<usize>,
+    floor: Option<usize>,
+    #[description = "Limits upper Threshold amount for result. Default is 20."]
+    #[min = 1_usize]
+    #[max = 100_usize]
+    ceiling: Option<usize>,
 ) -> Result<(), Error> {
-    let threshold_amount = gen_num(limit.unwrap_or(20)).await;
-    let parity_type = match gen_num(2).await {
+    let threshold_amount = if floor.unwrap_or(0) > ceiling.unwrap_or(20) {
+        speak(
+            context,
+            "The floor can't be greater than the ceiling, silly!",
+        )
+        .await;
+        gen_num(0, 20).await
+    } else {
+        gen_num(floor.unwrap_or(0), ceiling.unwrap_or(20)).await
+    };
+
+    let parity_type = match gen_num(0, 2).await {
         0 => "even",
         1 => "odd",
         _ => "Error",
@@ -288,49 +273,5 @@ pub(crate) async fn help(
 #[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn ping(context: Context<'_>) -> Result<(), Error> {
     context.say("Pong!").await?;
-    Ok(())
-}
-
-/// Testing out some poise features.
-#[poise::command(prefix_command, track_edits, member_cooldown = 2)]
-pub(crate) async fn boop(context: Context<'_>) -> Result<(), Error> {
-    let uuid_boop = context.id();
-
-    context
-        .send(|message: &mut poise::CreateReply| {
-            message.content("I want some boops!").components(|c| {
-                c.create_action_row(|ar| {
-                    ar.create_button(|b| {
-                        b.style(serenity::ButtonStyle::Primary)
-                            .label("Boop me!")
-                            .custom_id(uuid_boop)
-                    })
-                })
-            })
-        })
-        .await?;
-
-    let mut boop_count = 0;
-    while let Some(mci) = serenity::CollectComponentInteraction::new(context)
-        .author_id(context.author().id)
-        .channel_id(context.channel_id())
-        .timeout(tokio::time::Duration::from_secs(120))
-        .filter(move |mci| mci.data.custom_id == uuid_boop.to_string())
-        .await
-    {
-        boop_count += 1;
-
-        let mut msg = mci.message.clone();
-        msg.edit(context, |m| {
-            m.content(format!("Boop count: {}", boop_count))
-        })
-        .await?;
-
-        mci.create_interaction_response(context, |ir| {
-            ir.kind(serenity::InteractionResponseType::DeferredUpdateMessage)
-        })
-        .await?;
-    }
-
     Ok(())
 }
