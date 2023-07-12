@@ -56,7 +56,6 @@ async fn main() {
             commands::meta::ping(),
             commands::meta::fetch(),
             commands::meta::roll(),
-            commands::meta::boop(),
             commands::owner::rest(),
         ],
         prefix_options: poise::PrefixFrameworkOptions {
