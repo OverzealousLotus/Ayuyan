@@ -25,7 +25,7 @@ pub(crate) async fn speak(context: Context<'_>, message: &str) {
 }
 
 /// Function to fetch user input.
-pub(crate) async fn intake(context: Context<'_>, prompt: &str, err_response: &str) -> String {
+pub(crate) async fn _intake(context: Context<'_>, prompt: &str, err_response: &str) -> String {
     speak(context, prompt).await;
     if let Some(answer) = context
         .author()
