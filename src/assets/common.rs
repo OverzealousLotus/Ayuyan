@@ -5,7 +5,7 @@ use crate::Context;
 
 /// Function to create a seed, then return it.
 pub(crate) async fn gen_num(floor: usize, ceiling: usize) -> usize {
-    let mut seed = ClockSeed::default();
+    let mut seed = ClockSeed;
 
     let mut random_num = StdRand::seed(seed.next_u64());
 
@@ -72,7 +72,7 @@ macro_rules! fetch_subcommand {
 
             $($loop)?
 
-            speak(context, &format!("{:#?}", $storage)).await;
+            speak(context, &format!("{}", $storage)).await;
             Ok(())
         }
     };
