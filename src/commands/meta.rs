@@ -11,8 +11,7 @@ use crate::assets::{
 use crate::fetch_subcommand;
 use crate::{Context, Error};
 
-/// Fetches x amount of pieces of y.
-/// If left empty, fetches only once.
+/// Parent command of various subcommands with similar function.
 #[poise::command(
     slash_command,
     member_cooldown = 2,
@@ -26,8 +25,7 @@ use crate::{Context, Error};
         "tincture"
     )
 )]
-pub(crate) async fn fetch(context: Context<'_>) -> Result<(), Error> {
-    speak(context, "Simple subcommand test for Ayuyan.").await;
+pub(crate) async fn fetch(_: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
 
@@ -47,9 +45,9 @@ fetch_subcommand!(
     pub(crate) async fn armour
     #[description = "Maximum amount of rolls."]
     #[min = 1_usize]
-    #[max = 20_usize]
+    #[max = 10_usize]
     count: Option<usize>
-    let mut => armours: TinyVec<[Material<Armour>; 20]>,
+    let mut => armours: TinyVec<[Armour; 20]>,
     tiny_vec!();
     for _ in 0..count.unwrap_or(1) {
         armours.push(ARMOUR_LOOT[gen_num(0, ARMOUR_LOOT.len()).await]);
@@ -61,9 +59,9 @@ fetch_subcommand!(
     pub(crate) async fn weapon
     #[description = "Maximum amount of rolls."]
     #[min = 1_usize]
-    #[max = 20_usize]
+    #[max = 10_usize]
     count: Option<usize>
-    let mut => weapons: TinyVec<[Material<Weapon>; 20]>,
+    let mut => weapons: TinyVec<[Weapon; 20]>,
     tiny_vec!();
     for _ in 0..count.unwrap_or(1) {
         weapons.push(WEAPON_LOOT[gen_num(0, WEAPON_LOOT.len()).await]);
@@ -75,9 +73,9 @@ fetch_subcommand!(
     pub(crate) async fn elixir
     #[description = "Maximum amount of rolls."]
     #[min = 1_usize]
-    #[max = 20_usize]
+    #[max = 10_usize]
     count: Option<usize>
-    let mut => elixirs: TinyVec<[Strength<Elixir>; 20]>,
+    let mut => elixirs: TinyVec<[Elixir; 20]>,
     tiny_vec!();
     for _ in 0..count.unwrap_or(1) {
         elixirs.push(ELIXIR_LOOT[gen_num(0, ELIXIR_LOOT.len()).await]);
@@ -89,9 +87,9 @@ fetch_subcommand!(
     pub(crate) async fn tincture
     #[description = "Maximum amount of rolls."]
     #[min = 1_usize]
-    #[max = 20_usize]
+    #[max = 10_usize]
     count: Option<usize>
-    let mut => tinctures: TinyVec<[Strength<Tincture>; 20]>,
+    let mut => tinctures: TinyVec<[Tincture; 20]>,
     tiny_vec!();
     for _ in 0..count.unwrap_or(1) {
         tinctures.push(TINCTURE_LOOT[gen_num(0, TINCTURE_LOOT.len()).await]);
@@ -110,24 +108,29 @@ pub(crate) async fn generic(
     let mut loot = String::new();
 
     for _ in 0..count.unwrap_or(1) {
-        let table = gen_num(0, 3).await;
+        let table = gen_num(0, 4).await;
         match table {
             0 => write!(
                 loot,
-                "{:#?}, ",
+                "{}, ",
                 ARMOUR_LOOT[gen_num(0, ARMOUR_LOOT.len()).await]
             )?,
             1 => write!(
                 loot,
-                "{:#?}, ",
+                "{}, ",
                 WEAPON_LOOT[gen_num(0, WEAPON_LOOT.len()).await]
             )?,
             2 => write!(
                 loot,
-                "{:#?}, ",
+                "{}, ",
                 ELIXIR_LOOT[gen_num(0, ELIXIR_LOOT.len()).await]
             )?,
-            _ => write!(loot, "{:?}, ", Strength::Issue(Elixir::Issue))?,
+            3 => write!(
+                loot,
+                "{}, ",
+                TINCTURE_LOOT[gen_num(0, TINCTURE_LOOT.len()).await]
+            )?,
+            _ => write!(loot, "Error")?,
         }
     }
 
@@ -187,7 +190,7 @@ pub(crate) async fn roll(
 }
 
 /// Grab randomized conditions for successful dice roll.
-#[poise::command(slash_command, member_cooldown = 2)]
+#[poise::command(slash_command, owners_only, member_cooldown = 2)]
 pub(crate) async fn condition(
     context: Context<'_>,
     #[description = "If a Threshold should be required. Default is True."] threshold: Option<bool>,
@@ -272,6 +275,6 @@ pub(crate) async fn help(
 /// Simple command to check to see if Ayuyan is online.
 #[poise::command(slash_command, member_cooldown = 2)]
 pub(crate) async fn ping(context: Context<'_>) -> Result<(), Error> {
-    context.say("Pong!").await?;
+    speak(context, "Pong!").await;
     Ok(())
 }
