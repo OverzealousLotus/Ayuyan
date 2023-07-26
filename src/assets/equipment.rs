@@ -1,44 +1,107 @@
 use std::fmt;
-/// Types of materials available for weapons and armour.
+
+/// Struct representing a Weapon item.
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Material<I> {
-    Steel(I),
-    IronType(Iron<I>),
-    Bronze(I),
-    Brass(I),
-    LeatherType(Leather<I>),
+pub(crate) struct Weapon {
+    variant: WeaponType,
+    material: Material,
+}
+
+impl fmt::Display for Weapon {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{} {}", self.material, self.variant)
+    }
+}
+
+impl Weapon {
+    pub(crate) const fn new(variant: WeaponType, material: Material) -> Self {
+        Weapon { variant, material }
+    }
+}
+
+/// Struct representing an Armour item.
+#[derive(Default, Clone, Copy)]
+pub(crate) struct Armour {
+    variant: ArmourType,
+    material: Material,
+}
+
+impl fmt::Display for Armour {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{} {}", self.material, self.variant)
+    }
+}
+
+impl Armour {
+    pub(crate) const fn new(variant: ArmourType, material: Material) -> Self {
+        Armour { variant, material }
+    }
+}
+
+/// Types of available materials for weapons and armour.
+#[derive(Default, Clone, Copy)]
+pub(crate) enum Material {
+    SteelType(Steel),
+    IronType(Iron),
+    Bronze,
+    Brass,
+    Stone,
+    LeatherType(Leather),
     #[default]
     PhantomMaterial,
 }
 
-impl<I: fmt::Debug> fmt::Debug for Material<I> {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for Material {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::Steel(item) => write!(formatter, "Steel {:?}", item),
-            Self::IronType(alloy) => write!(formatter, "{:?}", alloy),
-            Self::Bronze(item) => write!(formatter, "Bronze {:?}", item),
-            Self::Brass(item) => write!(formatter, "Brass {:?}", item),
-            Self::LeatherType(alloy) => write!(formatter, "{:?}", alloy),
+            Self::SteelType(steel) => write!(formatter, "{}", steel),
+            Self::IronType(iron) => write!(formatter, "{}", iron),
+            Self::Bronze => write!(formatter, "Bronze"),
+            Self::Brass => write!(formatter, "Brass"),
+            Self::Stone => write!(formatter, "Stone"),
+            Self::LeatherType(leather) => write!(formatter, "{}", leather),
+            Self::PhantomMaterial => write!(formatter, "Error..."),
+        }
+    }
+}
+
+/// Subtypes of Steel.
+#[derive(Default, Clone, Copy)]
+pub(crate) enum Steel {
+    Ivory,
+    Ebon,
+    Common,
+    #[default]
+    PhantomSteel,
+}
+
+impl fmt::Display for Steel {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::Ivory => write!(formatter, "Ivory Steel"),
+            Self::Ebon => write!(formatter, "Ebonsteel"),
+            Self::Common => write!(formatter, "Common Steel"),
             _ => write!(formatter, "Error..."),
         }
     }
 }
+
 /// Subtypes of Iron.
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Iron<I> {
-    Cast(I),
-    Wrought(I),
-    Pig(I),
+pub(crate) enum Iron {
+    Cast,
+    Wrought,
+    Pig,
     #[default]
     PhantomIron,
 }
 
-impl<I: fmt::Debug> fmt::Debug for Iron<I> {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for Iron {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::Cast(item) => write!(formatter, "Cast Iron {:?}", item),
-            Self::Wrought(item) => write!(formatter, "Wrought Iron {:?}", item),
-            Self::Pig(item) => write!(formatter, "Pig Iron {:?}", item),
+            Self::Cast => write!(formatter, "Cast Iron"),
+            Self::Wrought => write!(formatter, "Wrought Iron"),
+            Self::Pig => write!(formatter, "Pig Iron"),
             _ => write!(formatter, "Error..."),
         }
     }
@@ -46,65 +109,101 @@ impl<I: fmt::Debug> fmt::Debug for Iron<I> {
 
 /// Subtypes of Leather.
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Leather<I> {
-    Heavy(I),
-    Medium(I),
-    Light(I),
+pub(crate) enum Leather {
+    Heavy,
+    Medium,
+    Light,
     #[default]
     PhantomLeather,
 }
 
-impl<I: fmt::Debug> fmt::Debug for Leather<I> {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for Leather {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::Heavy(item) => write!(formatter, "Heavy Leather  {:?}", item),
-            Self::Medium(item) => write!(formatter, "Medium Leather {:?}", item),
-            Self::Light(item) => write!(formatter, "Light Leather {:?}", item),
+            Self::Heavy => write!(formatter, "Heavy Leather"),
+            Self::Medium => write!(formatter, "Medium Leather"),
+            Self::Light => write!(formatter, "Light Leather"),
             _ => write!(formatter, "Error..."),
         }
     }
 }
 
-/// Strength ratings for consumables.
+/// Struct representing an Elixir item.
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Strength<I> {
-    Potent(I),
-    Nominal(I),
-    Impotent(I),
-    Issue(I),
+pub(crate) struct Elixir {
+    variant: ElixirType,
+    potency: Potency,
+}
+
+impl fmt::Display for Elixir {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{} {}", self.potency, self.variant)
+    }
+}
+
+impl Elixir {
+    pub(crate) const fn new(variant: ElixirType, potency: Potency) -> Self {
+        Elixir { variant, potency }
+    }
+}
+
+/// Struct representing a Tincture item.
+#[derive(Default, Clone, Copy)]
+pub(crate) struct Tincture {
+    variant: TinctureType,
+    potency: Potency,
+}
+
+impl fmt::Display for Tincture {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
+        write!(formatter, "{} {}", self.potency, self.variant)
+    }
+}
+
+impl Tincture {
+    pub(crate) const fn new(variant: TinctureType, potency: Potency) -> Self {
+        Tincture { variant, potency }
+    }
+}
+
+/// Potency ratings for consumables.
+#[derive(Default, Clone, Copy)]
+pub(crate) enum Potency {
+    Potent,
+    Nominal,
+    Impotent,
+    Diluted,
     #[default]
-    PhantomStrength,
+    PhantomPotency,
 }
 
-impl<I: fmt::Debug> fmt::Debug for Strength<I> {
+impl fmt::Display for Potency {
     fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
-            Self::Potent(consumable) => write!(formatter, "Potent {:?}", consumable),
-            Self::Nominal(consumable) => {
-                write!(formatter, "Nominal {:?}", consumable)
-            }
-            Self::Impotent(consumable) => {
-                write!(formatter, "Impotent {:?}", consumable)
-            }
+            Self::Potent => write!(formatter, "Potent"),
+            Self::Nominal => write!(formatter, "Nominal"),
+            Self::Impotent => write!(formatter, "Impotent"),
+            Self::Diluted => write!(formatter, "Diluted"),
             _ => write!(formatter, "Error..."),
         }
     }
 }
 
-/// Types of available Elixirs.
+/// Elixirs are Potions for me. If this confuses you, feel free to change it, as they refer-
+/// -to the same concept. The variant names can also be swapped out.
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Elixir {
+pub(crate) enum ElixirType {
     Haste,
     Vitality,
     Vigor,
     Impedance,
-    Issue,
     #[default]
     PhantomElixir,
 }
 
-impl fmt::Debug for Elixir {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for ElixirType {
+    /// Make sure to modify this if you change variant names, or add new ones.
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::Haste => write!(formatter, "Elixir of Haste"),
             Self::Vitality => write!(formatter, "Elixir of Vitality"),
@@ -115,17 +214,18 @@ impl fmt::Debug for Elixir {
     }
 }
 
-/// Types of available Tinctures.
+/// Tinctures are medicinal brews, rather than "potions" in my use-case.
+/// This can be removed if you have no interest, or merge it into `Elixir`
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Tincture {
+pub(crate) enum TinctureType {
     Laudanum,
     Iodyne,
     #[default]
     PhantomTincture,
 }
 
-impl fmt::Debug for Tincture {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for TinctureType {
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::Laudanum => write!(formatter, "Ticture of Laudanum"),
             Self::Iodyne => write!(formatter, "Ticture of Iodyne"),
@@ -134,9 +234,10 @@ impl fmt::Debug for Tincture {
     }
 }
 
-/// Types of available Armour.
+/// Armours are simplified for my use-case.
+/// However, this can easily be extended to suit others' needs.
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Armour {
+pub(crate) enum ArmourType {
     Helmet,
     Chestplate,
     Gauntlets,
@@ -146,8 +247,9 @@ pub(crate) enum Armour {
     PhantomArmour,
 }
 
-impl fmt::Debug for Armour {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for ArmourType {
+    /// To extend, just add another match arm for your variant.
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::Helmet => write!(formatter, "Helmet"),
             Self::Chestplate => write!(formatter, "Chestplate"),
@@ -159,9 +261,10 @@ impl fmt::Debug for Armour {
     }
 }
 
-/// Types of available weaponry.
+/// I expect this enum to vastly expand.
+/// There are so many weapons, having a simple few isn't enough.
 #[derive(Default, Clone, Copy)]
-pub(crate) enum Weapon {
+pub(crate) enum WeaponType {
     Ultrasword,
     Greatsword,
     Longsword,
@@ -175,8 +278,12 @@ pub(crate) enum Weapon {
     PhantomWeapon,
 }
 
-impl fmt::Debug for Weapon {
-    fn fmt(&self, formatter: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl fmt::Display for WeaponType {
+    /// Weaponry is easily concated into being: "Bronze Longsword", but
+    /// bows themselves are usually made of a flexible material.
+    /// So, having them made entirely out of iron makes no sense.
+    /// Therefore, they are instead: "Bronze Lined Longbow"
+    fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
             Self::Ultrasword => write!(formatter, "Ultrasword"),
             Self::Greatsword => write!(formatter, "Greatsword"),
@@ -184,9 +291,9 @@ impl fmt::Debug for Weapon {
             Self::Shortsword => write!(formatter, "Shortsword"),
             Self::Greatmace => write!(formatter, "Greatmace"),
             Self::Mace => write!(formatter, "Mace"),
-            Self::Greatbow => write!(formatter, "Based Greatbow"),
-            Self::Longbow => write!(formatter, "Based Longbow"),
-            Self::Shortbow => write!(formatter, "Based Shortbow"),
+            Self::Greatbow => write!(formatter, "Lined Greatbow"),
+            Self::Longbow => write!(formatter, "Lined Longbow"),
+            Self::Shortbow => write!(formatter, "Lined Shortbow"),
             _ => write!(formatter, "Error..."),
         }
     }
