@@ -40,6 +40,7 @@ fetch_subcommand!(
     {}
 );
 
+// Test 
 fetch_subcommand!(
     /// Grab Armour(s) from a table.
     pub(crate) async fn armour
