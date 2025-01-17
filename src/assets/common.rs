@@ -70,7 +70,7 @@ macro_rules! fetch_subcommand {
             $parameter: Option<usize>) -> Result<(), Error> {
             $($declaration)+ $storage: $storage_type = $definition;
 
-            $($loop)?
+            $($loop)?;
 
             speak(context, &format!("{}", $storage)).await;
             Ok(())

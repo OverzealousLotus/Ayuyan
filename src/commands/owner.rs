@@ -10,12 +10,6 @@ pub(crate) async fn rest(context: Context<'_>) -> Result<(), Error> {
         "It always ends the same way... With me observing...",
     )
     .await;
-    context
-        .framework()
-        .shard_manager()
-        .lock()
-        .await
-        .shutdown_all()
-        .await;
+    context.framework().shard_manager().shutdown_all().await;
     Ok(())
 }

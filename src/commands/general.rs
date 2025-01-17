@@ -33,7 +33,6 @@ fetch_subcommand!(
     /// Grab a randomized amount of coins.
     pub(crate) async fn coin
     #[description = "Maximum amount of coins."]
-    #[min = 1_usize]
     #[max = 1000_usize]
     limit: Option<usize>
     let => result: usize,
@@ -44,7 +43,6 @@ fetch_subcommand!(
     /// Grab Armour(s) from a table.
     pub(crate) async fn armour
     #[description = "Maximum amount of rolls."]
-    #[min = 1_usize]
     #[max = 10_usize]
     count: Option<usize>
     let mut => armours: TinyVec<[Armour; 20]>,
@@ -58,7 +56,6 @@ fetch_subcommand!(
     /// Grab Weapon(s) from a table.
     pub(crate) async fn weapon
     #[description = "Maximum amount of rolls."]
-    #[min = 1_usize]
     #[max = 10_usize]
     count: Option<usize>
     let mut => weapons: TinyVec<[Weapon; 20]>,
@@ -72,7 +69,6 @@ fetch_subcommand!(
     /// Grab Elixir(s) from a table.
     pub(crate) async fn elixir
     #[description = "Maximum amount of rolls."]
-    #[min = 1_usize]
     #[max = 10_usize]
     count: Option<usize>
     let mut => elixirs: TinyVec<[Elixir; 20]>,
@@ -86,7 +82,6 @@ fetch_subcommand!(
     /// Grab Tincture(s) from a table.
     pub(crate) async fn tincture
     #[description = "Maximum amount of rolls."]
-    #[min = 1_usize]
     #[max = 10_usize]
     count: Option<usize>
     let mut => tinctures: TinyVec<[Tincture; 20]>,
@@ -101,7 +96,6 @@ fetch_subcommand!(
 pub(crate) async fn generic(
     context: Context<'_>,
     #[description = "Get generic loot from tables with set roll count."]
-    #[min = 1_usize]
     #[max = 20_usize]
     count: Option<usize>,
 ) -> Result<(), Error> {
@@ -139,56 +133,6 @@ pub(crate) async fn generic(
     Ok(())
 }
 
-/// Simple command to roll a die.
-#[poise::command(slash_command, member_cooldown = 2)]
-pub(crate) async fn roll(
-    context: Context<'_>,
-    #[description = "Times die will be rolled."]
-    #[min = 1_usize]
-    #[max = 100_usize]
-    count: Option<usize>,
-    #[description = "Number of sides on die."]
-    #[min = 1_usize]
-    #[max = 200_usize]
-    sides: Option<usize>,
-    #[description = "Specify if rolls should be summed up."] sum: Option<bool>,
-    #[description = "Modifier to be applied to rolls."]
-    #[min = -100_isize]
-    #[max = 100_isize]
-    modifier: Option<isize>,
-) -> Result<(), Error> {
-    let mut results: TinyVec<[usize; 128]> = tiny_vec!();
-
-    for _ in 0..count.unwrap_or(1) {
-        results.push(gen_num(0, sides.unwrap_or(20)).await)
-    }
-
-    if modifier.is_none() {
-        if sum.unwrap_or(false) {
-            speak(context, &format!("{:?}", results.iter().sum::<usize>())).await;
-        } else {
-            speak(context, &format!("{results:?}")).await;
-        }
-    } else if sum.unwrap_or(false) {
-        let modified_results = results
-            .iter()
-            .map(|roll| *roll as isize + modifier.unwrap())
-            .collect::<TinyVec<[isize; 128]>>();
-        speak(
-            context,
-            &format!("{:?}", modified_results.iter().sum::<isize>()),
-        )
-        .await;
-    } else {
-        let modified_results = results
-            .iter()
-            .map(|roll| *roll as isize + modifier.unwrap())
-            .collect::<TinyVec<[isize; 128]>>();
-        speak(context, &format!("{modified_results:?}")).await;
-    }
-    Ok(())
-}
-
 /// Grab randomized conditions for successful dice roll.
 #[poise::command(slash_command, owners_only, member_cooldown = 2)]
 pub(crate) async fn condition(
@@ -196,11 +140,9 @@ pub(crate) async fn condition(
     #[description = "If a Threshold should be required. Default is True."] threshold: Option<bool>,
     #[description = "If a Parity should be required. Default is False."] parity: Option<bool>,
     #[description = "Limits lower Threshold amount for result. Default is 0."]
-    #[min = 1_usize]
     #[max = 100_usize]
     floor: Option<usize>,
     #[description = "Limits upper Threshold amount for result. Default is 20."]
-    #[min = 1_usize]
     #[max = 100_usize]
     ceiling: Option<usize>,
 ) -> Result<(), Error> {
