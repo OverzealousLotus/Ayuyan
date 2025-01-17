@@ -31,7 +31,7 @@ pub(crate) async fn fetch(_: Context<'_>) -> Result<(), Error> {
 
 fetch_subcommand!(
     /// Grab a randomized amount of coins.
-    pub(crate) async fn coin
+    coin
     #[description = "Maximum amount of coins."]
     #[max = 1000_usize]
     limit: Option<usize>
@@ -43,7 +43,7 @@ fetch_subcommand!(
 // Test 
 fetch_subcommand!(
     /// Grab Armour(s) from a table.
-    pub(crate) async fn armour
+    armour
     #[description = "Maximum amount of rolls."]
     #[max = 10_usize]
     count: Option<usize>
@@ -56,7 +56,7 @@ fetch_subcommand!(
 
 fetch_subcommand!(
     /// Grab Weapon(s) from a table.
-    pub(crate) async fn weapon
+    weapon
     #[description = "Maximum amount of rolls."]
     #[max = 10_usize]
     count: Option<usize>
@@ -69,7 +69,7 @@ fetch_subcommand!(
 
 fetch_subcommand!(
     /// Grab Elixir(s) from a table.
-    pub(crate) async fn elixir
+    elixir
     #[description = "Maximum amount of rolls."]
     #[max = 10_usize]
     count: Option<usize>
@@ -82,7 +82,7 @@ fetch_subcommand!(
 
 fetch_subcommand!(
     /// Grab Tincture(s) from a table.
-    pub(crate) async fn tincture
+    tincture
     #[description = "Maximum amount of rolls."]
     #[max = 10_usize]
     count: Option<usize>

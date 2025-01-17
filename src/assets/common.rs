@@ -56,7 +56,7 @@ pub(crate) async fn _intake(context: Context<'_>, prompt: &str, err_response: &s
 macro_rules! fetch_subcommand {
     (
         $(#[$attributes:meta])*
-        $privacy:vis async fn $func:ident
+        $name:ident
         $(#[$inner_attributes:meta])*
         $parameter:ident: Option<usize>
         $($declaration:ident)+ => $storage:ident: $storage_type:ty,
@@ -65,7 +65,7 @@ macro_rules! fetch_subcommand {
     ) => {
         $(#[$attributes])*
         #[poise::command(slash_command, member_cooldown = 2)]
-        $privacy async fn $func(
+        pub(crate) async fn $name(
             context: Context<'_>,
             $(#[$inner_attributes])*
             $parameter: Option<usize>) -> Result<(), Error> {
