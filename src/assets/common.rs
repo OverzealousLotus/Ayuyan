@@ -41,6 +41,7 @@ pub(crate) async fn _intake(context: Context<'_>, prompt: &str, err_response: &s
     }
 }
 
+
 #[macro_export]
 /// Macro used to define several functions with very similar logic.
 ///
@@ -60,7 +61,7 @@ macro_rules! fetch_subcommand {
         $parameter:ident: Option<usize>
         $($declaration:ident)+ => $storage:ident: $storage_type:ty,
         $definition:expr;
-        $($loop:expr)?
+        $($cycle:expr)+
     ) => {
         $(#[$attributes])*
         #[poise::command(slash_command, member_cooldown = 2)]
@@ -70,7 +71,7 @@ macro_rules! fetch_subcommand {
             $parameter: Option<usize>) -> Result<(), Error> {
             $($declaration)+ $storage: $storage_type = $definition;
 
-            $($loop)?;
+            $($cycle)+;
 
             speak(context, &format!("{}", $storage)).await;
             Ok(())

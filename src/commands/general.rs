@@ -37,6 +37,7 @@ fetch_subcommand!(
     limit: Option<usize>
     let => result: usize,
     gen_num(0, limit.unwrap_or(20)).await;
+    {}
 );
 
 fetch_subcommand!(

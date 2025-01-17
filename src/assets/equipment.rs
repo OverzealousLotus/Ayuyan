@@ -48,7 +48,7 @@ pub(crate) enum Material {
     Stone,
     LeatherType(Leather),
     #[default]
-    PhantomMaterial,
+    PhantomVariant,
 }
 
 impl fmt::Display for Material {
@@ -60,7 +60,7 @@ impl fmt::Display for Material {
             Self::Brass => write!(formatter, "Brass"),
             Self::Stone => write!(formatter, "Stone"),
             Self::LeatherType(leather) => write!(formatter, "{}", leather),
-            Self::PhantomMaterial => write!(formatter, "Error..."),
+            Self::PhantomVariant => write!(formatter, "Error..."),
         }
     }
 }
@@ -72,7 +72,7 @@ pub(crate) enum Steel {
     Ebon,
     Common,
     #[default]
-    PhantomSteel,
+    PhantomSteelVar,
 }
 
 impl fmt::Display for Steel {
@@ -93,7 +93,7 @@ pub(crate) enum Iron {
     Wrought,
     Pig,
     #[default]
-    PhantomIron,
+    PhantomIronVar,
 }
 
 impl fmt::Display for Iron {
@@ -114,7 +114,7 @@ pub(crate) enum Leather {
     Medium,
     Light,
     #[default]
-    PhantomLeather,
+    PhantomLeatherVar,
 }
 
 impl fmt::Display for Leather {
@@ -174,7 +174,7 @@ pub(crate) enum Potency {
     Impotent,
     Diluted,
     #[default]
-    PhantomPotency,
+    PhantomPotencyVar,
 }
 
 impl fmt::Display for Potency {
