@@ -3,6 +3,9 @@ name: Rust
 on:
   push:
     branches: [ "main" ]
+    paths:
+      - '**/Cargo.toml'
+      - '**/Cargo.lock'
   pull_request:
     branches: [ "main" ]
 
@@ -11,16 +14,17 @@ env:
 
 jobs:
   linting:
-
     runs-on: ubuntu-latest
-
     steps:
-    - uses: actions/checkout@v3
-    - name: Install cargo-audit
-      run: cargo install cargo-audit
+    - uses: actions/checkout@v4
     - name: Build
       run: cargo build --verbose
     - name: Clippy
       run: cargo clippy --verbose -- -D warnings
-    - name: Audit
-      run: cargo audit
+  security_audit:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: rustsec/audit-check@v2.0.0
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
