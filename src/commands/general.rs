@@ -1,12 +1,12 @@
 use std::fmt::Write;
 /// External crates brought into scope.
-use tinyvec::*;
+use tinyvec::{TinyVec, tiny_vec};
 
 /// Local crates brought into scopes.
 use crate::assets::{
     common::{gen_num, speak},
-    equipment::*,
-    loot_tables::*,
+    equipment::{Armour, Elixir, Tincture, Weapon},
+    loot_tables::{ARMOUR_LOOT, ELIXIR_LOOT, TINCTURE_LOOT, WEAPON_LOOT},
 };
 use crate::fetch_subcommand;
 use crate::{Context, Error};
@@ -25,6 +25,7 @@ use crate::{Context, Error};
         "tincture"
     )
 )]
+#[allow(clippy::unused_async)] // False positive.
 pub(crate) async fn fetch(_: Context<'_>) -> Result<(), Error> {
     Ok(())
 }
@@ -166,31 +167,15 @@ pub(crate) async fn condition(
     };
 
     if threshold.unwrap_or(true) && !parity.unwrap_or(false) {
-        speak(
-            context,
-            &format!(
-                "You must reach/surpass a threshold of **{}**!",
-                threshold_amount
-            ),
-        )
-        .await;
+        speak(context, &format!("You must reach/surpass a threshold of **{threshold_amount}**!")).await;
     } else if parity.unwrap_or(false) && !threshold.unwrap_or(true) {
-        speak(
-            context,
-            &format!("You must have an **{}** parity!", parity_type),
-        )
-        .await
+        speak(context, &format!("You must have an **{parity_type}** parity!")).await;
     } else if parity.unwrap_or(false) && threshold.unwrap_or(true) {
-        speak(
-            context,
-            &format!(
-                "You must reach/surpass a threshold of **{}** and have an **{}** parity!",
-                threshold_amount, parity_type
-            ),
-        )
-        .await
+        speak(context, &format!(
+            "Surpass a threshold of **{threshold_amount}** and have an **{parity_type}** parity!")
+        ).await;
     } else {
-        speak(context, "You're so silly! I can't do nothing!").await
+        speak(context, "You're so silly! I can't do nothing!").await;
     }
 
     Ok(())

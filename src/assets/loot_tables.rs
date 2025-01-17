@@ -1,7 +1,14 @@
 use crate::assets::equipment::{Armour, Elixir, Tincture, Weapon};
 use crate::assets::equipment::{
-    ArmourType::*, ElixirType::*, Iron::*, Leather::*, Material::*, Potency::*, Steel::*,
-    TinctureType::*, WeaponType::*,
+    ArmourType::{Helmet, Chestplate, Gauntlets, Chausses, Grieves},
+    ElixirType::{Haste, Vigor, Impedance, Vitality},
+    Iron::{Cast, Pig, Wrought},
+    Leather::{Light, Medium, Heavy},
+    Material::{Stone, Brass, Bronze, LeatherType, IronType, SteelType},
+    Potency::{Impotent, Diluted, Nominal, Potent},
+    Steel::{Common, Ebon, Ivory},
+    TinctureType::{Laudanum, Iodyne},
+    WeaponType::{Greatbow, Greatmace, Greatsword, Longbow, Longsword, Mace, Shortbow, Shortsword, Ultrasword},
 };
 
 /// Array used to store armours.

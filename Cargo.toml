@@ -23,3 +23,7 @@ features = ["alloc"]
 
 [profile.release]
 lto = true
+
+[lints.clippy]
+pedantic = "warn"
+unwrap_used = "warn"

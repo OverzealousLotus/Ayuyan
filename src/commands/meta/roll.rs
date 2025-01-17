@@ -21,7 +21,7 @@ pub(crate) async fn roll(
     let summable = summable.unwrap_or(false);
 
     for _ in 0..count.unwrap_or(1) {
-        results.push(gen_num(0, sides.unwrap_or(20)).await)
+        results.push(gen_num(0, sides.unwrap_or(20)).await);
     }
 
     println!("Roll Count: {count:?}, Sides: {sides:?}, Summation Enabled: {summable:?}, Modifier: {modifier:?}");
@@ -41,7 +41,7 @@ pub(crate) async fn roll(
     Ok(())
 }
 
-
+#[allow(clippy::cast_possible_wrap)] // Roll will never exceed isize/usize maximum.
 async fn modify_results(context: Context<'_>, results: TinyVec<[usize; 128]>, modifier: isize, summable: bool) {
     let new_results: TinyVec<[isize; 128]>;
     if summable {

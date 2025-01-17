@@ -54,12 +54,12 @@ pub(crate) enum Material {
 impl fmt::Display for Material {
     fn fmt(&self, formatter: &mut fmt::Formatter) -> fmt::Result {
         match self {
-            Self::SteelType(steel) => write!(formatter, "{}", steel),
-            Self::IronType(iron) => write!(formatter, "{}", iron),
+            Self::SteelType(steel) => write!(formatter, "{steel}"),
+            Self::IronType(iron) => write!(formatter, "{iron}"),
             Self::Bronze => write!(formatter, "Bronze"),
             Self::Brass => write!(formatter, "Brass"),
             Self::Stone => write!(formatter, "Stone"),
-            Self::LeatherType(leather) => write!(formatter, "{}", leather),
+            Self::LeatherType(leather) => write!(formatter, "{leather}"),
             Self::PhantomVariant => write!(formatter, "Error..."),
         }
     }
@@ -81,7 +81,7 @@ impl fmt::Display for Steel {
             Self::Ivory => write!(formatter, "Ivory Steel"),
             Self::Ebon => write!(formatter, "Ebonsteel"),
             Self::Common => write!(formatter, "Common Steel"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomSteelVar => write!(formatter, "Error..."),
         }
     }
 }
@@ -102,7 +102,7 @@ impl fmt::Display for Iron {
             Self::Cast => write!(formatter, "Cast Iron"),
             Self::Wrought => write!(formatter, "Wrought Iron"),
             Self::Pig => write!(formatter, "Pig Iron"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomIronVar => write!(formatter, "Error..."),
         }
     }
 }
@@ -123,7 +123,7 @@ impl fmt::Display for Leather {
             Self::Heavy => write!(formatter, "Heavy Leather"),
             Self::Medium => write!(formatter, "Medium Leather"),
             Self::Light => write!(formatter, "Light Leather"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomLeatherVar => write!(formatter, "Error..."),
         }
     }
 }
@@ -184,7 +184,7 @@ impl fmt::Display for Potency {
             Self::Nominal => write!(formatter, "Nominal"),
             Self::Impotent => write!(formatter, "Impotent"),
             Self::Diluted => write!(formatter, "Diluted"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomPotencyVar => write!(formatter, "Error..."),
         }
     }
 }
@@ -209,7 +209,7 @@ impl fmt::Display for ElixirType {
             Self::Vitality => write!(formatter, "Elixir of Vitality"),
             Self::Vigor => write!(formatter, "Elixir of Vigor"),
             Self::Impedance => write!(formatter, "Elixir of Impedance"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomElixir => write!(formatter, "Error..."),
         }
     }
 }
@@ -229,7 +229,7 @@ impl fmt::Display for TinctureType {
         match self {
             Self::Laudanum => write!(formatter, "Ticture of Laudanum"),
             Self::Iodyne => write!(formatter, "Ticture of Iodyne"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomTincture => write!(formatter, "Error..."),
         }
     }
 }
@@ -256,7 +256,7 @@ impl fmt::Display for ArmourType {
             Self::Gauntlets => write!(formatter, "Gauntlets"),
             Self::Chausses => write!(formatter, "Chausses"),
             Self::Grieves => write!(formatter, "Grieves"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomArmour => write!(formatter, "Error..."),
         }
     }
 }
@@ -294,7 +294,7 @@ impl fmt::Display for WeaponType {
             Self::Greatbow => write!(formatter, "Lined Greatbow"),
             Self::Longbow => write!(formatter, "Lined Longbow"),
             Self::Shortbow => write!(formatter, "Lined Shortbow"),
-            _ => write!(formatter, "Error..."),
+            Self::PhantomWeapon => write!(formatter, "Error..."),
         }
     }
 }
