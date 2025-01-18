@@ -13,7 +13,7 @@ tinyrand = "0.5.0"
 tinyrand-std = "0.5.0"
 
 [dependencies.tokio]
-version = "1.29.1"
+version = "1.43.0"
 default-features = false
 features = ["macros", "rt-multi-thread"]
 
