@@ -9,8 +9,7 @@ authors = ["OverzealousLotus"]
 dashmap = "6.1.0"
 dotenvy = "0.15.7"
 poise = "0.6.1"
-tinyrand = "0.5.0"
-tinyrand-std = "0.5.0"
+rand_simple = "0.2.39"
 
 [dependencies.tokio]
 version = "1.43.0"

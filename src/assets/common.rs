@@ -1,14 +1,16 @@
-use tinyrand::{Rand, RandRange, Seeded, StdRand};
-use tinyrand_std::ClockSeed;
+use rand_simple::{Uniform, generate_seeds};
 
 use crate::Context;
 
-/// Function to create a seed, then return it.
+/// Function to create a random number, then return it.
+#[allow(clippy::cast_precision_loss, clippy::cast_possible_truncation, clippy::cast_sign_loss)] // This is fine :)
 pub(crate) async fn gen_num(floor: usize, ceiling: usize) -> usize {
-    let mut seed = ClockSeed;
-    let mut random_num = StdRand::seed(seed.next_u64());
+    let seed: u32 = generate_seeds!(2)[1];
+    let mut dist = Uniform::new(seed);
+    dist.try_set_params(floor as f64, ceiling as f64).expect("Failed to set range.");
+    let random_num = dist.sample().round();
 
-    random_num.next_range(floor..ceiling)
+    random_num as usize
 }
 
 /// Function to simplify, and handle message sending.
